@@ -2,6 +2,7 @@ import weakref
 import numpy as np
 import contextlib
 
+
 class Config:
     enable_backprop = True
 
@@ -15,8 +16,10 @@ def using_config(name, value):
     finally:
         setattr(Config, name, old_value)
     
+
 def no_grad():
     return using_config('enable_backprop', False)
+
 
 class Variable:
     def __init__(self, data) -> None:
@@ -88,12 +91,13 @@ class Function:
             ys = (ys,)
         outputs = [Variable(as_array(y)) for y in ys] # Wrap data
         
-        self.generation = max([x.generation for x in inputs])
-        for output in outputs:
-            output.set_creator(self)
-        
-        self.inputs = inputs
-        self.outputs = [weakref.ref(output) for output in outputs]
+        if Config.enable_backprop:
+            self.generation = max([x.generation for x in inputs])
+            for output in outputs:
+                output.set_creator(self)
+            
+            self.inputs = inputs
+            self.outputs = [weakref.ref(output) for output in outputs]
 
         return outputs if len(outputs) > 1 else outputs[0]
 

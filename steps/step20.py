@@ -15,7 +15,7 @@ def using_config(name, value):
         yield
     finally:
         setattr(Config, name, old_value)
-    
+
 
 def no_grad():
     return using_config('enable_backprop', False)
@@ -123,7 +123,7 @@ class Function:
             self.generation = max([x.generation for x in inputs])
             for output in outputs:
                 output.set_creator(self)
-        
+            
             self.inputs = inputs
             self.outputs = [weakref.ref(output) for output in outputs]
 
@@ -165,9 +165,31 @@ def add(x0, x1):
     return Add()(x0, x1)
 
 
-x = Variable(np.array([[1, 2, 3], [4, 5, 6]]))
-x.name = 'x'
+class Mul(Function):
+    def forward(self, x0, x1):
+        y = x0 * x1
+        return y 
 
-print(x.name)
-print(x.shape)
-print(x)
+    def backward(self, gy):
+        x0, x1 = self.inputs[0].data, self.inputs[1].data
+        return gy * x1, gy * x0
+
+
+def mul(x0, x1):
+    return Mul()(x0, x1)
+
+
+Variable.__add__ = add
+Variable.__mul__ = mul
+
+a = Variable(np.array(3.0))
+b = Variable(np.array(2.0))
+c = Variable(np.array(1.0))
+
+# y = add(mul(a, b), c)
+y = a * b + c
+y.backward()
+
+print(y)
+print(a.grad)
+print(b.grad)
