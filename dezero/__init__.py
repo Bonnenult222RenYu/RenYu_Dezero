@@ -1,6 +1,6 @@
 # =============================================================================
 # 从step23.py到step32.py使用simple_core
-is_simple_core = True  # True
+is_simple_core = False  # True
 # =============================================================================
 
 if is_simple_core:
@@ -13,7 +13,14 @@ if is_simple_core:
     from dezero.core_simple import setup_variable
 
 else:
-    pass
+    from dezero.core import Variable
+    from dezero.core import Function
+    from dezero.core import using_config
+    from dezero.core import no_grad
+    from dezero.core import as_array
+    from dezero.core import as_variable
+    from dezero.core import setup_variable
+    from dezero.core import Config
 
 setup_variable()
 __version__ = '0.0.1'
