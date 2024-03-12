@@ -136,6 +136,10 @@ class Variable:
         return dezero.functions.sum(self, axis, keepdims)
 
 
+class Parameter(Variable):
+    pass
+
+
 def as_variable(obj):
     if isinstance(obj, Variable):
         return obj
@@ -231,6 +235,7 @@ def neg(x):
 
 class Sub(Function):
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         y = x0 - x1
         return y
 
