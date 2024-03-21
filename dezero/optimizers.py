@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from dezero import Parameter
+from dezero import Parameter, cuda
 
 
 # =============================================================================
@@ -83,7 +83,7 @@ class Adam(Optimizer):
         return self.alpha * math.sqrt(fix2) / fix1
 
     def update_one(self, param):
-        xp = np
+        xp = cuda.get_array_module(param.data)
         key = id(param)
         if key not in self.ms:
             self.ms[key] = xp.zeros_like(param.data)
